@@ -20,14 +20,16 @@ def validate_with(schema):
     return decorator
 
 
-def login_required(f):
-    @wraps(f)
-    @jwt_required
-    def decorated_function(*args, **kwargs):
-        current_user_id = get_jwt_identity()
-        current_user = User.query.get(current_user_id)
-        if current_user is None:
-            return jsonify({'msg': 'Not authorized'}), 401
-        kwargs['current_user'] = current_user
-        return f(*args, **kwargs)
-    return decorated_function
+def login_required():
+    def decorator(f):
+        @wraps(f)
+        @jwt_required()
+        def decorated_function(*args, **kwargs):
+            current_user_id = get_jwt_identity()
+            current_user = User.query.get(current_user_id)
+            if current_user is None:
+                return jsonify({'msg': 'Not authorized'}), 401
+            kwargs['current_user'] = current_user
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator

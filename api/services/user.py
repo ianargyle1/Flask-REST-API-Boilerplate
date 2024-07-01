@@ -7,9 +7,9 @@ from werkzeug.security import check_password_hash
 from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity
 
 
-def register(name, email, password):
+def register(first_name, last_name, email, password):
     # Create a new User instance
-    new_user = User(name=name, email=email)
+    new_user = User(first_name=first_name, last_name=last_name, email=email)
     new_user.set_password(password)
 
     try:
@@ -48,10 +48,18 @@ def retrieve(current_user):
     return user_schema.dump(current_user), 200
 
 
-def update_name(current_user, new_name):
-    current_user.name = new_name
+def update_first_name(current_user, new_first_name):
+    current_user.first_name = new_first_name
     db.session.commit()
-    return {'message': 'User updated successfully'}, 200
+    user_schema = UserSchema()
+    return user_schema.dump(current_user), 200
+
+
+def update_last_name(current_user, new_last_name):
+    current_user.last_name = new_last_name
+    db.session.commit()
+    user_schema = UserSchema()
+    return user_schema.dump(current_user), 200
 
 
 def update_email(current_user, new_email):
@@ -61,10 +69,5 @@ def update_email(current_user, new_email):
     except IntegrityError:
         db.session.rollback()
         return {'error': 'A user with this email already exists.'}, 400
-    return {'message': 'User updated successfully'}, 200
-
-
-def update_password(current_user, new_password):
-    current_user.set_password(new_password)
-    db.session.commit()
-    return {'message': 'User updated successfully'}, 200
+    user_schema = UserSchema()
+    return user_schema.dump(current_user), 200
