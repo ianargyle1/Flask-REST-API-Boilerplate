@@ -28,5 +28,6 @@ def login_required(f):
         current_user = User.query.get(current_user_id)
         if current_user is None:
             return jsonify({'msg': 'Not authorized'}), 401
-        return f(current_user, *args, **kwargs)
+        kwargs['current_user'] = current_user
+        return f(*args, **kwargs)
     return decorated_function
