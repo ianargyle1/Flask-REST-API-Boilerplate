@@ -13,6 +13,14 @@ class LoginSchema(Schema):
     password = fields.Str(required=True, validate=validate.Length(min=1, max=128))
 
 
+class LoginWithAppleSchema(Schema):
+    first_name = fields.Str(required=False, validate=validate.Length(min=1, max=50))
+    last_name = fields.Str(required=False, validate=validate.Length(min=1, max=50))
+    email = fields.Email(required=True, validate=[validate.Email(), validate.Length(max=255)])
+    apple_id = fields.Str(required=True, validate=validate.Length(min=1))
+    token = fields.Str(required=True, validate=validate.Length(min=1))
+
+
 class AuthResponseSchema(Schema):
     token = fields.Str(required=False)
     refresh_token = fields.Str(required=False)
